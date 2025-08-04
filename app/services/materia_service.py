@@ -1,41 +1,44 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from app.models.materia import Materia
 from app.schemas.materia import MateriaCreate, MateriaUpdate
 from fastapi import HTTPException
 from app.services.instituicao_service import get_instituicao
 
-def create_materia(db: Session, materia: MateriaCreate, instituicao_id: int):
+async def create_materia(db: AsyncSession, materia: MateriaCreate, instituicao_id: int):
 
-    if not get_instituicao(db, instituicao_id):
+    if not await get_instituicao(db, instituicao_id):
         raise HTTPException(status_code=404, detail="Instituição não encontrada")
 
-    materia: Materia = Materia(**materia.model_dump(), instituicao_id=instituicao_id)
-    db.add(materia)
-    db.commit()
-    db.refresh(materia)
-    return materia
+    materia_obj = Materia(**materia.model_dump(), instituicao_id=instituicao_id)
+    db.add(materia_obj)
+    await db.commit()
+    await db.refresh(materia_obj)
+    return materia_obj
 
-def get_materia(db: Session, materia_id: int):
-    return db.query(Materia).filter(Materia.id == materia_id).first()
+async def get_materia(db: AsyncSession, materia_id: int):
+    result = await db.execute(select(Materia).filter(Materia.id == materia_id))
+    return result.scalar_one_or_none()
 
-def get_materias_by_instituicao(db: Session, instituicao_id: int):
-    return db.query(Materia).filter(Materia.instituicao_id == instituicao_id).all()
+async def get_materias_by_instituicao(db: AsyncSession, instituicao_id: int):
+    result = await db.execute(select(Materia).filter(Materia.instituicao_id == instituicao_id))
+    return result.scalars().all()
 
-def update_materia(db: Session, materia_id: int, materia_data: MateriaUpdate):
-    materia = get_materia(db, materia_id=materia_id)
+async def update_materia(db: AsyncSession, materia_id: int, materia_data: MateriaUpdate):
+    materia = await get_materia(db, materia_id=materia_id)
 
     if materia:
         for field, value in materia_data.model_dump(exclude_unset=True).items():
             setattr(materia, field, value)
-        db.commit()
-        db.refresh(materia)
+        await db.commit()
+        await db.refresh(materia)
         return materia
     return None
 
-def delete_materia(db: Session, materia_id: int):
-    materia = get_materia(db, materia_id=materia_id)
+async def delete_materia(db: AsyncSession, materia_id: int):
+    materia = await get_materia(db, materia_id=materia_id)
     if materia:
-        db.delete(materia)
-        db.commit()
+        await db.delete(materia)
+        await db.commit()
         return True
     return False

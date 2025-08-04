@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
 from app.db.database import Base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+if TYPE_CHECKING:
+    from app.models.usuario import Usuario
+    from app.models.materia import Materia
 
 class Instituicao(Base):
     __tablename__ = "instituicoes"
@@ -12,6 +17,3 @@ class Instituicao(Base):
     # Relacionamentos
     usuario: Mapped["Usuario"] = relationship("Usuario", back_populates="instituicoes")
     materias: Mapped[list["Materia"]] = relationship("Materia", back_populates="instituicao", cascade="all, delete-orphan")
-
-from app.models.usuario import Usuario
-from app.models.materia import Materia
