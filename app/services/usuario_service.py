@@ -53,3 +53,15 @@ def login_usuario(db: Session, credentials: UsuarioLogin):
         "token_type": "bearer",
         "usuario": usuario_data
     }
+
+def change_password(db: Session, usuario_id: int, password_data: UsuarioChangePassword):
+    usuario = get_usuario(db, usuario_id=usuario_id)
+
+    if not usuario or not verify_password(password_data.senha_atual, usuario.senha):
+        return False
+
+    new_password_hash = get_password_hash(password_data.nova_senha)
+    usuario.senha = new_password_hash
+    db.commit()
+    db.refresh(usuario)
+    return True
