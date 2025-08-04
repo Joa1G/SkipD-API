@@ -16,7 +16,7 @@ def create_subject(instituition_id: int, materia: MateriaCreate, db: Session = D
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return create_materia(db, materia, instituition_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -27,7 +27,7 @@ def get_subjects_by_instituition(instituition_id: int, db: Session = Depends(get
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return get_materias_by_instituicao(db, instituition_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -38,7 +38,7 @@ def get_subject_by_id(materia_id: int, db: Session = Depends(get_db), token: str
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return get_materia(db, materia_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -52,7 +52,7 @@ def update_subject(materia_id: int, materia_data: MateriaUpdate, db: Session = D
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Matéria not found")
         return updated_materia
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -66,6 +66,6 @@ def delete_subject(materia_id: int, db: Session = Depends(get_db), token: str = 
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Matéria not found")
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -57,10 +57,10 @@ def login_usuario(db: Session, credentials: UsuarioLogin):
 def change_password(db: Session, usuario_id: int, password_data: UsuarioChangePassword):
     usuario = get_usuario(db, usuario_id=usuario_id)
 
-    if not usuario or not verify_password(password_data.senha_atual, usuario.senha):
+    if not usuario or not verify_password(password_data.old_senha, usuario.senha):
         return False
 
-    new_password_hash = get_password_hash(password_data.nova_senha)
+    new_password_hash = get_password_hash(password_data.new_senha)
     usuario.senha = new_password_hash
     db.commit()
     db.refresh(usuario)

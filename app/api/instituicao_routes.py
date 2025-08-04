@@ -16,7 +16,7 @@ def create_instituition(user_id: int, instituicao: InstituicaoCreate, db: Sessio
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return create_instituicao(db, instituicao, user_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -25,9 +25,9 @@ def get_instituitions_by_user(user_id: int, db: Session = Depends(get_db), token
     try:
         if not decode_token(token):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-        return get_instituicoes_by_usuario(db, user_id)
+        return get_instituicoes_by_usuario(db=db, usuario_id=user_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -38,7 +38,7 @@ def get_instituition_by_id(instituicao_id: int, db: Session = Depends(get_db), t
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return get_instituicao(db, instituicao_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -52,7 +52,7 @@ def update_instituition(instituicao_id: int, instituicao_data: InstituicaoUpdate
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Instituição not found")
         return updated_instituicao
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
@@ -66,7 +66,7 @@ def delete_instituition(instituicao_id: int, db: Session = Depends(get_db), toke
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Instituição not found")
         return {"detail": "Instituição deleted successfully"}
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

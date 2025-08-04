@@ -14,7 +14,7 @@ def create_user(user: UsuarioCreate, db: Session = Depends(get_db)):
     try:
         return create_usuario(db, user)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -25,7 +25,7 @@ def get_user(user_id: int, db: Session = Depends(get_db), token: str = Depends(o
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
         return get_usuario(db, user_id)
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -39,7 +39,7 @@ def update_user(user_id: int, user: UsuarioUpdate, db: Session = Depends(get_db)
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return updated
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     
@@ -53,6 +53,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db), token: str = Depend
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return {"detail": "User deleted successfully"}
     except HTTPException as e:
-        return HTTPException(status_code=e.status_code, detail=e.detail)
+        raise e
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

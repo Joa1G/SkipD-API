@@ -1,31 +1,17 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase, Session
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 DATABASE_URL = "postgresql+asyncpg://user:password@localhost/skipddb"
 
-engine = create_engine(
-    DATABASE_URL,
-    echo=True,
-    future=True,
-    pool_size=20,
-    max_overflow=30,
-    pool_timeout=30,
-    pool_recycle=3600,
-)
+engine = create_async_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(
-    bind=engine,
-    autoflush=False,
-    expire_on_commit=False,
-    autocommit=False,
-)
+SessionLocal = async_sessionmaker(engine)
 
 class Base(DeclarativeBase):
     pass
 
-def get_db():
-    db: Session = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db():
+    async with SessionLocal() as session:
+        yield session

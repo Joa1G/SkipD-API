@@ -13,13 +13,13 @@ class Materia(BaseModel):
     aulas_quinta: int
     aulas_sexta: int
     aulas_sabado: int
-    instituicao_id: int
 
 class MateriaCreate(Materia):
     pass
 
 class MateriaRead(Materia):
     id: int
+    instituicao_id: int
     class Config:
         from_attributes = True
 

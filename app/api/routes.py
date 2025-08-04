@@ -13,7 +13,7 @@ def secure_endpoint():
 
 @router.post("/token")
 def login_usuario_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    usuario_input = UsuarioLogin(email=form_data.username, senha=form_data.password)
+    usuario_input = UsuarioLogin(email=form_data.email, senha=form_data.password)
     usuario = login_usuario(db, usuario_input)
 
     if not usuario:

@@ -1,9 +1,13 @@
 from sqlalchemy.orm import Session
 from app.models.instituicao import Instituicao
 from app.schemas.instituicao import InstituicaoCreate, InstituicaoUpdate
+from app.services.usuario_service import get_usuario
+from fastapi import HTTPException
 
 def create_instituicao(db: Session, instituicao: InstituicaoCreate, usuario_id: int):
-    instituicao: Instituicao = Instituicao(**instituicao.model_dump(), id_usuario=usuario_id)
+    if not get_usuario(db, usuario_id):
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    instituicao: Instituicao = Instituicao(**instituicao.model_dump(), usuario_id=usuario_id)
     db.add(instituicao)
     db.commit()
     db.refresh(instituicao)
