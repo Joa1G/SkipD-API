@@ -29,3 +29,5 @@ CORREÇÕES_APLICADAS.md
 
 # Logs
 *.log
+
+secret_key.py

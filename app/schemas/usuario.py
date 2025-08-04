@@ -21,7 +21,7 @@ class UsuarioRead(BaseModel):
 class UsuarioUpdate(BaseModel):
     nome: Optional[str] = None
     email: Optional[EmailStr] = None
-    senha: Optional[str] = None
+    # senha: Optional[str] = None
     is_premium: Optional[bool] = None
     url_foto: Optional[str] = None
 

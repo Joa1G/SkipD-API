@@ -10,7 +10,7 @@ from app.core.auth import decode_token
 from app.models.usuario import Usuario
 from app.models.instituicao import Instituicao
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 router = APIRouter(prefix="/instituition", tags=["Instituição"])
 

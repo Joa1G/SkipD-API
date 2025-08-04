@@ -3,12 +3,12 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.schemas.usuario import UsuarioCreate, UsuarioRead, UsuarioUpdate, UsuarioChangePassword
-from app.services.usuario_service import create_usuario, get_usuario, get_usuario_by_email, update_usuario, delete_usuario, change_password
+from app.services.usuario_service import create_usuario, get_usuario, get_usuario_by_email, update_usuario, delete_usuario, change_password, get_all_users
 from app.db.database import get_db
 from app.core.auth import decode_token
 from app.models.usuario import Usuario
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
 
 router = APIRouter(prefix="/user", tags=["Usuario"])
 
@@ -102,5 +102,13 @@ async def change_user_password(user_id: int, password_data: UsuarioChangePasswor
         return {"detail": "Password changed successfully"}
     except HTTPException as e:
         raise e
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+@router.get("", response_model=list[UsuarioRead])
+async def list_all_users(db: AsyncSession = Depends(get_db)):
+    try:
+        users = await get_all_users(db)
+        return users
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

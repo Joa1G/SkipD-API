@@ -71,3 +71,7 @@ async def change_password(db: AsyncSession, usuario_id: int, password_data: Usua
     await db.commit()
     await db.refresh(usuario)
     return True
+
+async def get_all_users(db: AsyncSession):
+    result = await db.execute(select(Usuario))
+    return result.scalars().all()

@@ -1,8 +1,8 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
+from app.core.secret_key import SECRET_KEY  # Ensure you have a secret key defined in a separate file
 
-SECRET_KEY = "thayna_e_joao_sao_10"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
