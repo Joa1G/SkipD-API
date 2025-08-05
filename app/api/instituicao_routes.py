@@ -27,13 +27,13 @@ async def get_current_user(token: str, db: AsyncSession) -> Usuario:
     return current_user
 
 @router.post("/{user_id}", response_model=InstituicaoRead, status_code=status.HTTP_201_CREATED)
-async def create_instituition(user_id: int, instituicao: InstituicaoCreate, db: AsyncSession = Depends(get_db), token: str = Depends(oauth2_scheme)):
+async def create_instituition(user_id: int, instituicao: InstituicaoCreate, db: AsyncSession = Depends(get_db)):#, token: str = Depends(oauth2_scheme)):
     try:
-        current_user = await get_current_user(token, db)
+        # current_user = await get_current_user(token, db)
         
-        # Verificar se o usuário pode criar instituição para este user_id
-        if current_user.id != user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not authorized to create this institution")
+        # # Verificar se o usuário pode criar instituição para este user_id
+        # if current_user.id != user_id:
+        #     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not authorized to create this institution")
 
         return await create_instituicao(db, instituicao, user_id)
     except HTTPException as e:

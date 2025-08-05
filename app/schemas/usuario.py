@@ -5,15 +5,15 @@ class UsuarioCreate(BaseModel):
     nome: str
     email: EmailStr
     senha: str
-    is_premium: bool
-    url_foto: str
+    is_premium: bool = False
+    url_foto: str = ""
 
 class UsuarioRead(BaseModel):
     id: int
     nome: str
     email: EmailStr
-    is_premium: bool
-    url_foto: str
+    is_premium: bool = False
+    url_foto: str = ""
 
     class Config:
         from_attributes = True
@@ -22,8 +22,8 @@ class UsuarioUpdate(BaseModel):
     nome: Optional[str] = None
     email: Optional[EmailStr] = None
     # senha: Optional[str] = None
-    is_premium: Optional[bool] = None
-    url_foto: Optional[str] = None
+    is_premium: Optional[bool] = False
+    url_foto: Optional[str] = ""
 
 class UsuarioLogin(BaseModel):
     email: EmailStr
