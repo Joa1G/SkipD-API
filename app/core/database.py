@@ -1,9 +1,13 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Base para os models
+Base = declarative_base()
 
 # Detecta automaticamente se está no Render ou local
 DATABASE_URL = os.getenv("DATABASE_URL")
