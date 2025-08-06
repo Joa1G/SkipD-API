@@ -1,8 +1,12 @@
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
-from app.core.secret_key import SECRET_KEY  # Ensure you have a secret key defined in a separate file
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key-for-development")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
