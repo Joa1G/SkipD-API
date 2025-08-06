@@ -14,8 +14,11 @@ print(f"Original DATABASE_URL: {DATABASE_URL}")
 if not DATABASE_URL:
     DATABASE_URL = "sqlite+aiosqlite:///./skipddb.db"
 elif DATABASE_URL.startswith("postgres://"):
-    # Render usa postgres://, mas SQLAlchemy precisa de postgresql://
+    # Render usa postgres://, mas SQLAlchemy precisa de postgresql+asyncpg://
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
+elif DATABASE_URL.startswith("postgresql://"):
+    # Se já é postgresql://, troca para postgresql+asyncpg://
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 # Criar engine
 engine = create_async_engine(DATABASE_URL, echo=True)
