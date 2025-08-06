@@ -8,38 +8,34 @@ load_dotenv()
 # Detecta automaticamente se está no Render ou local
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+print(f"Original DATABASE_URL: {DATABASE_URL}")
+
 # Se não tiver DATABASE_URL definida, usa SQLite local
 if not DATABASE_URL:
     DATABASE_URL = "sqlite+aiosqlite:///./skipddb.db"
     print("Using SQLite database for local development")
 else:
-    # Normalizar URL do PostgreSQL
+    # Forçar uso do asyncpg para PostgreSQL
     if DATABASE_URL.startswith("postgres://"):
-        # Render usa postgres://, converter para postgresql+asyncpg://
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
         print("Converted postgres:// to postgresql+asyncpg://")
-    elif DATABASE_URL.startswith("postgresql://"):
-        # Se já vier como postgresql://, adiciona asyncpg
+    elif DATABASE_URL.startswith("postgresql://") and "+asyncpg" not in DATABASE_URL:
         DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
-        print("Converted postgresql:// to postgresql+asyncpg://")
+        print("Added asyncpg driver to postgresql://")
     
     print("Using PostgreSQL database for production")
 
-print(f"Final DATABASE_URL: {DATABASE_URL[:50]}...")  # Mostra só o início por segurança
+print(f"Final DATABASE_URL: {DATABASE_URL[:50]}...")
 
-# Configurações específicas baseadas no tipo de banco
+# Configurações mais simples para evitar problemas
 if DATABASE_URL.startswith("sqlite"):
-    engine_kwargs = {"echo": False}  # Menos verbose para SQLite
+    engine_kwargs = {"echo": False}
 else:
-    engine_kwargs = {
-        "echo": False,
-        "pool_size": 5,
-        "max_overflow": 10,
-        "pool_pre_ping": True
-    }
+    engine_kwargs = {"echo": False, "pool_pre_ping": True}
 
 # Criar engine
 engine = create_async_engine(DATABASE_URL, **engine_kwargs)
+print("Database engine created successfully")
 
 # Session maker
 AsyncSessionLocal = sessionmaker(
