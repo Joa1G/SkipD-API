@@ -13,29 +13,12 @@ print(f"Original DATABASE_URL: {DATABASE_URL}")
 # Se não tiver DATABASE_URL definida, usa SQLite local
 if not DATABASE_URL:
     DATABASE_URL = "sqlite+aiosqlite:///./skipddb.db"
-    print("Using SQLite database for local development")
-else:
-    # Forçar uso do asyncpg para PostgreSQL
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
-        print("Converted postgres:// to postgresql+asyncpg://")
-    elif DATABASE_URL.startswith("postgresql://") and "+asyncpg" not in DATABASE_URL:
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
-        print("Added asyncpg driver to postgresql://")
-    
-    print("Using PostgreSQL database for production")
-
-print(f"Final DATABASE_URL: {DATABASE_URL[:50]}...")
-
-# Configurações mais simples para evitar problemas
-if DATABASE_URL.startswith("sqlite"):
-    engine_kwargs = {"echo": False}
-else:
-    engine_kwargs = {"echo": False, "pool_pre_ping": True}
+elif DATABASE_URL.startswith("postgres://"):
+    # Render usa postgres://, mas SQLAlchemy precisa de postgresql://
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+asyncpg://", 1)
 
 # Criar engine
-engine = create_async_engine(DATABASE_URL, **engine_kwargs)
-print("Database engine created successfully")
+engine = create_async_engine(DATABASE_URL, echo=True)
 
 # Session maker
 AsyncSessionLocal = sessionmaker(
